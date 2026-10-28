@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoundIt | Report Lost Item</title>
+  <link rel="stylesheet" href="report.css">
+</head>
+<body>
+  <header>
+    <div class="logo">🔎 FoundIt</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="index.html#items">Browse Items</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <div class="form-header">
+        <h1>Report a Lost Item</h1>
+        <p>Fill out the details below to help our community reunite you with your missing item.</p>
+      </div>
+
+      <form id="reportForm" action="#" method="POST" enctype="multipart/form-data">
+        
+        <!-- Item Details Section -->
+        <fieldset class="form-section">
+          <legend>Item Details</legend>
+
+          <div class="form-group">
+            <label for="itemTitle">Item Name / Title *</label>
+            <input type="text" id="itemTitle" name="itemTitle" placeholder="e.g., Black Leather Wallet, Car Keys" required>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" name="category" required>
+              <option value="" disabled selected>Select a category</option>
+              <option value="electronics">Electronics (Phone, Earbuds, Laptop)</option>
+              <option value="keys">Keys & Accessories</option>
+              <option value="wallets">Wallets, Bags & Purses</option>
+              <option value="clothing">Clothing & Apparel</option>
+              <option value="documents">IDs, Cards & Documents</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Last Known Location *</label>
+            <input type="text" id="location" name="location" placeholder="e.g., Library 2nd floor, Student Center cafeteria" required>
+          </div>
+
+          <div class="form-group">
+            <label for="dateLost">Date Lost *</label>
+            <input type="date" id="dateLost" name="dateLost" required>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Detailed Description *</label>
+            <textarea id="description" name="description" rows="4" placeholder="Describe distinct features, stickers, brand names, color, contents inside, etc." required></textarea>
+          </div>
+
+          <!-- Image Upload Field -->
+          <div class="form-group">
+            <label for="itemImage">Upload Photo (Optional)</label>
+            <div class="file-upload-wrapper">
+              <input type="file" id="itemImage" name="itemImage" accept="image/*" onchange="previewImage(event)">
+              <div class="image-preview" id="imagePreviewContainer">
+                <img id="imagePreview" src="" alt="Image Preview" style="display: none;">
+                <span id="previewPlaceholder">📷 Click to upload or drag an image here</span>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Contact Information Section -->
+        <fieldset class="form-section">
+          <legend>Contact Information</legend>
+
+          <!-- Anonymous Toggle Option -->
+          <div class="form-group checkbox-group">
+            <label class="toggle-container">
+              <input type="checkbox" id="anonymousCheck" onchange="toggleContactFields()">
+              <span class="checkmark"></span>
+              <strong>Submit anonymously</strong>
+            </label>
+            <p class="help-text">If checked, your contact details will be hidden from the public post.</p>
+          </div>
+
+          <div id="contactFields">
+            <div class="form-group">
+              <label for="contactName">Your Name</label>
+              <input type="text" id="contactName" name="contactName" placeholder="e.g., Jane Doe">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="contactPhone">Phone Number</label>
+                <input type="tel" id="contactPhone" name="contactPhone" placeholder="(555) 000-0000">
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="contactEmail">Email Address</label>
+                <input type="email" id="contactEmail" name="contactEmail" placeholder="you@example.com">
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="submit-button">Submit Report</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>FoundIt — A community-powered lost and found</p>
+    <p>&copy; 2026 FoundIt. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Toggle contact fields based on Anonymous checkbox
+    function toggleContactFields() {
+      const isAnonymous = document.getElementById("anonymousCheck").checked;
+      const contactFields = document.getElementById("contactFields");
+      const inputs = contactFields.querySelectorAll("input");
+
+      if (isAnonymous) {
+        contactFields.style.opacity = "0.4";
+        contactFields.style.pointerEvents = "none";
+        inputs.forEach(input => {
+          input.value = "";
+          input.disabled = true;
+        });
+      } else {
+        contactFields.style.opacity = "1";
+        contactFields.style.pointerEvents = "auto";
+        inputs.forEach(input => input.disabled = false);
+      }
+    }
+
+    // Image preview handler
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById("imagePreview");
+      const placeholder = document.getElementById("previewPlaceholder");
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          preview.style.display = "block";
+          placeholder.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = "";
+        preview.style.display = "none";
+        placeholder.style.display = "block";
+      }
+    }
+
+    // Form submissionhandler
+    document.getElementById("reportForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("Thank you! Your lost item report has been submitted successfully.");
+      // Here you would send data to your backend or GitHub Pages integration.
+    });
+  </script>
+</body>
+</html>
