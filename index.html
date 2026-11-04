@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FoundIt | Lost & Found</title>
   <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body>
   <header>
-    <div class="logo">🔎 FoundIt</div>
+    <div class="logo">FoundIt</div>
     <nav>
       <a href="#">Home</a>
       <a href="#items">Browse Items</a>
-      <a href="about.html">About</a>
+      <a href="#about">About</a>
     </nav>
   </header>
 
@@ -67,10 +66,13 @@
       </div>
 
       <div class="items-grid" id="itemsGrid">
+
         <article class="item-card"
           data-status="lost"
           data-search="car keys black library">
-          <div class="item-image" aria-hidden="true">🔑</div>
+          <div class="item-image">
+            <img src="Keys.JPG" alt="Black car keys">
+          </div>
           <div class="item-info">
             <span class="status lost">Lost</span>
             <h3>Car Keys</h3>
@@ -81,7 +83,9 @@
         <article class="item-card"
           data-status="found"
           data-search="blue backpack student center">
-          <div class="item-image" aria-hidden="true">🎒</div>
+          <div class="item-image">
+            <img src="Backpack.png" alt="Blue backpack">
+          </div>
           <div class="item-info">
             <span class="status found">Found</span>
             <h3>Blue Backpack</h3>
@@ -92,7 +96,9 @@
         <article class="item-card"
           data-status="lost"
           data-search="house key silver parking lot">
-          <div class="item-image" aria-hidden="true">🗝️</div>
+          <div class="item-image">
+            <img src="Keys.JPG" alt="Silver house key">
+          </div>
           <div class="item-info">
             <span class="status lost">Lost</span>
             <h3>House Key</h3>
@@ -102,14 +108,17 @@
 
         <article class="item-card"
           data-status="found"
-          data-search="wireless earbuds white cafeteria">
-          <div class="item-image" aria-hidden="true">🎧</div>
+          data-search="wallet brown cafeteria">
+          <div class="item-image">
+            <img src="Wallet.png" alt="Wallet">
+          </div>
           <div class="item-info">
             <span class="status found">Found</span>
-            <h3>Earbuds Case</h3>
+            <h3>Wallet</h3>
             <p>📍 Cafeteria · Oct 16</p>
           </div>
         </article>
+
       </div>
     </section>
 
@@ -164,6 +173,7 @@
           emptyMessage.className = "empty-message";
           emptyMessage.textContent =
             "No matching items found. Try another search.";
+
           document.getElementById("itemsGrid")
             .appendChild(emptyMessage);
         }
@@ -175,6 +185,7 @@
     searchForm.addEventListener("submit", event => {
       event.preventDefault();
       updateItems();
+
       document.getElementById("items")
         .scrollIntoView({ behavior: "smooth" });
     });
@@ -202,3 +213,5 @@
   </script>
 </body>
 </html>
+
+    
