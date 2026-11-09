@@ -7,6 +7,7 @@ function loadLostItems() {
             const rows = data.split('\n').slice(1);
             const lostItemsContainer = document.getElementById('lostItems');
             rows.forEach(row => {
+                if (!row.trim()) return; // skip blank lines so they don't show as "undefined"
                 const cols = row.split(',');
                 const itemRow = document.createElement('tr');
                 itemRow.classList.add('lost-item');
