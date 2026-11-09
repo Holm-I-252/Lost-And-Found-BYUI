@@ -39,7 +39,7 @@
     }
 
     .hero {
-      background: #173d35;
+      background: #BFD7EA;
       color: white;
       padding: 65px 8% 75px;
       text-align: center;
@@ -139,7 +139,7 @@
     .filter-button {
       background: white;
       color: #BFD7EA;
-      border: 1px solid #d5e1da;
+      border: 1px solid #BFD7EA;
     }
 
     .filter-button.active {
@@ -167,13 +167,13 @@
 
     .item-image {
   height: 150px;
-  background: #e5efe8;
+  background: #BFD7EA;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 48px;
     }
-    
+
     .item-image img {
   width: 100%;
   height: 100%;
@@ -200,7 +200,7 @@
     }
 
     .status.found {
-      background: #d9f4df;
+      background: #BFD7EA;
       color: #0B3954;
     }
 
