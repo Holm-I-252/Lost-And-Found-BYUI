@@ -3,26 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Lost Item</title>
+    <title>FoundIt | Report an Item</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="report.css">
     <script src="report.js" defer></script>
 </head>
 <body>
-    <header>
+  <header>
     <div class="logo">FoundIt</div>
     <nav>
       <a href="index.html">Home</a>
-      <a href="#items">Browse Items</a>
-      <a href="#about">About</a>
+      <a href="items.html">Browse Items</a>
+      <a href="about.html">About</a>
     </nav>
   </header>
-  <main>
-    <button id="showLostFormButton">Report Lost Item</button>
-    <button id="showFoundFormButton">Report Found Item</button>
-    <div id="formContainer" class="hidden">
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdOzsuYYiMLNiCOf4UyBUGb0YPZ806VGeE293D4tvGm1zmT3Q/viewform?embedded=true" width="640" height="1046" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+
+  <section class="page-banner">
+    <h1>Report an Item</h1>
+    <p>Lost something, or found something that isn't yours? Let us know and we'll help get it back where it belongs.</p>
+  </section>
+
+  <main class="report-page">
+    <div class="report-options">
+      <div class="report-option">
+        <div class="report-option-icon" aria-hidden="true">🔍</div>
+        <h2>I lost something</h2>
+        <p>Tell us what you lost, where you last had it, and how we can reach you.</p>
+        <button id="showLostFormButton" class="lost-button" type="button">Report Lost Item</button>
+      </div>
+
+      <div class="report-option">
+        <div class="report-option-icon" aria-hidden="true">🎒</div>
+        <h2>I found something</h2>
+        <p>Describe the item and where you found it so its owner can track it down.</p>
+        <button id="showFoundFormButton" class="lost-button" type="button">Report Found Item</button>
+      </div>
     </div>
+
+    <div id="formContainer" class="hidden form-card">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdOzsuYYiMLNiCOf4UyBUGb0YPZ806VGeE293D4tvGm1zmT3Q/viewform?embedded=true" width="640" height="1046" frameborder="0" marginheight="0" marginwidth="0" title="Item report form">Loading…</iframe>
+    </div>
+
+    <section class="callout">
+      <h2>Want to check first?</h2>
+      <p>Someone may have already reported your item. <a href="items.html">Browse reported items</a> before submitting a new report.</p>
+    </section>
   </main>
+
+  <footer>
+    <p>FoundIt — A community-powered lost and found</p>
+    <p>&copy; 2026 FoundIt. All rights reserved.</p>
+  </footer>
 </body>
 </html>

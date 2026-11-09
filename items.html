@@ -3,33 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Lost Item</title>
+    <title>FoundIt | Browse Lost Items</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="report.css">
     <script src="browseItems.js" defer></script>
 </head>
 <body>
-    <header>
+  <header>
     <div class="logo">FoundIt</div>
     <nav>
       <a href="index.html">Home</a>
       <a href="items.html">Browse Items</a>
-      <a href="#about">About</a>
+      <a href="about.html">About</a>
     </nav>
   </header>
+
+  <section class="page-banner">
+    <h1>Lost Item Reports</h1>
+    <p>Every item reported through FoundIt shows up here. Recognize something? Reach out and help it get home.</p>
+  </section>
+
   <main>
-    <div id="lostItemsContainer">
-      <h3>Lost Items</h3>
-      <table id="lostItems">
-        <tr>
-          <th>Date</th>
+    <div id="lostItemsContainer" class="table-card">
+      <div class="table-card-header">
+        <h3>Lost Items</h3>
+        <a href="report.html" class="table-card-link">+ Report an Item</a>
+      </div>
+      <div class="table-scroll">
+        <table id="lostItems" class="items-table">
+          <tr>
+            <th>Date</th>
             <th>Item</th>
             <th>Description</th>
             <th>Location</th>
-        </tr>
-        <!-- Auto populated lost items will appear here. -->
-      </table>
+          </tr>
+          <!-- Auto populated lost items will appear here. -->
+        </table>
+      </div>
     </div>
   </main>
+
+  <footer>
+    <p>FoundIt — A community-powered lost and found</p>
+    <p>&copy; 2026 FoundIt. All rights reserved.</p>
+  </footer>
 </body>
 </html>
