@@ -40,8 +40,26 @@
           <!-- Auto populated lost items will appear here. -->
         </table>
       </div>
+      <p class="table-card-hint">Click any item to see its full details.</p>
     </div>
   </main>
+
+  <dialog id="itemModal" class="item-modal" aria-labelledby="itemModalTitle">
+    <div class="item-modal-content">
+      <div class="item-modal-header">
+        <div>
+          <span class="status lost">Lost</span>
+          <h2 id="itemModalTitle">Item details</h2>
+        </div>
+        <button type="button" class="item-modal-x" data-close-modal aria-label="Close details">&times;</button>
+      </div>
+      <dl id="itemModalDetails" class="item-modal-details"></dl>
+      <div class="item-modal-footer">
+        <a href="report.html" class="table-card-link">Report a Found Item</a>
+        <button type="button" class="item-modal-close" data-close-modal>Close</button>
+      </div>
+    </div>
+  </dialog>
 
   <footer>
     <p>FoundIt — A community-powered lost and found</p>
