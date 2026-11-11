@@ -23,9 +23,8 @@
       gap: 16px;
     }
 
-    .logo {
-      font-size: 25px;
-      font-weight: bold;
+    #logo {
+      width: 400px;
     }
 
     nav a {
