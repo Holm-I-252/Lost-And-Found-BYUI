@@ -1089,7 +1089,6 @@ ul {
   padding: 12px 16px;
   border-radius: var(--radius-sm);
   background: var(--sky-soft);
-  color: var(--muted);
   font-size: 14px;
 }
 
@@ -1705,7 +1704,7 @@ select.input {
   animation: bob 3s ease-in-out infinite alternate;
 }
 
-.empty-state h3 {
+.empty-state h2 {
   font-size: 26px;
   color: var(--text);
 }
@@ -2075,7 +2074,7 @@ select.input {
   font-size: 20px;
 }
 
-.tip h3 {
+.tip h2 {
   margin-bottom: 4px;
   font-family: var(--font-body);
   font-size: 15px;
@@ -2161,7 +2160,7 @@ select.input {
   transform: scale(1.06);
 }
 
-.t-step h3 {
+.t-step h2 {
   margin-bottom: 8px;
   font-size: 24px;
 }
@@ -2429,7 +2428,7 @@ select.input {
   font-size: 15px;
 }
 
-.site-footer h4 {
+.site-footer h2 {
   margin-bottom: 14px;
   font-family: var(--font-body);
   font-size: 13px;

@@ -246,7 +246,7 @@
             <div class="item-card__media"><span class="item-card__emoji" aria-hidden="true"></span></div>
             <div class="item-card__badges"></div>
             <div class="item-card__body">
-                <h3 class="item-card__title"></h3>
+                <h2 class="item-card__title"></h2>
                 <p class="item-card__desc"></p>
                 <div class="item-card__meta">
                     <span class="meta-place">${icon('pin')}<span></span></span>
