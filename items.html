@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Browse the board · FoundIt</title>
   <meta name="description" content="Search every lost and found report on campus. Filter by what it is, where it was and when.">
   <meta name="theme-color" content="#04121C">
@@ -49,6 +49,7 @@
         <a href="claim.html">How to claim</a>
         <a href="faq.html">FAQ</a>
         <a href="about.html">About</a>
+        <a class="btn btn--primary nav-cta" href="report.html">Report an item</a>
       </nav>
       <div class="header-actions">
         <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch theme"></button>
@@ -68,15 +69,21 @@
 
   <main id="main">
     <div class="container pull-up">
-      <form class="filter-panel" id="filters" role="search" aria-label="Filter reports" data-reveal>
+      <div class="filter-slot">
+      <form class="filter-panel" id="filters" role="search" aria-label="Filter reports">
+        <div class="sheet-head">
+          <h2 class="sheet-title">Filters</h2>
+          <button class="icon-btn" type="button" data-close-filters aria-label="Close filters"><i data-icon="close"></i></button>
+        </div>
         <div class="filter-row">
-          <div class="field">
+          <div class="field field--what">
             <label class="field-label" for="fWhat">What</label>
             <div class="input-wrap">
               <i data-icon="search"></i>
               <input class="input" id="fWhat" type="search" placeholder="Keys, wallet, blue hat…" autocomplete="off">
             </div>
           </div>
+          <button class="btn btn--ghost filters-toggle" type="button" id="filtersToggle" aria-expanded="false" aria-controls="filters"><i data-icon="sliders"></i>Filters <span class="filters-count" id="filtersCount" hidden></span></button>
           <div class="field">
             <label class="field-label" for="fWhere">Where</label>
             <div class="input-wrap">
@@ -121,7 +128,14 @@
             <button type="button" data-type="found" aria-pressed="false">Found</button>
           </div>
         </div>
+
+        <div class="sheet-actions">
+          <button class="btn btn--ghost" type="reset">Clear all</button>
+          <button class="btn btn--primary" type="button" data-close-filters id="showResults">Show results</button>
+        </div>
       </form>
+      </div>
+      <div class="sheet-backdrop" id="sheetBackdrop"></div>
 
       <div class="results-bar">
         <p class="results-count" id="resultsCount" aria-live="polite">Loading reports…</p>

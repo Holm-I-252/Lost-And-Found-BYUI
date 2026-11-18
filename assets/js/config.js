@@ -11,6 +11,8 @@ window.FOUNDIT_CONFIG = {
     // Google Forms (the normal "viewform" link; the site adds ?embedded=true itself).
     lostForm: "https://docs.google.com/forms/d/e/1FAIpQLSdOzsuYYiMLNiCOf4UyBUGb0YPZ806VGeE293D4tvGm1zmT3Q/viewform",
     foundForm: "https://docs.google.com/forms/d/e/1FAIpQLSdaWimxdVLtIacjnVuitWYd9axru9ixM7e1VlTis9vG_GnxoA/viewform",
+    // Cort's form on found_items.html: owners confirm they got their item back.
+    confirmFoundForm: "https://docs.google.com/forms/d/e/1FAIpQLSctBiolwzxbq8dMeYOIkTava7uXnKfhPuCvb_MBu1O411s8Pw/viewform",
 
     // While the board has fewer real reports than this, Browse also shows
     // clearly marked sample items (visitors can switch them off). Set to 0 to never do it.

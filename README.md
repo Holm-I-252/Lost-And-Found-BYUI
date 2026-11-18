@@ -12,11 +12,12 @@ Live site: https://holm-i-252.github.io/Lost-And-Found-BYUI/
 - **Campus map:** each report lands on its BYU-Idaho building (building names and coordinates from OpenStreetMap).
 - **Report:** choose "I lost something" or "I found something" and the matching Google Form opens right on the page.
 - **New pages:** How to claim (step timeline), FAQ (with search), About (team and how we built it).
-- Works on phones, by keyboard, and respects "reduce motion".
+- **Made for phones:** compact item rows, filters in a pull-up sheet with a "Show N items" button, item details as a bottom sheet (swipe down to close), a header that hides while you scroll, one-row category chips, forms sized for small screens, and no zoom-in on iPhone inputs.
+- Works by keyboard and respects "reduce motion".
 
 ### Pages
 
-`index.html` (home), `items.html` (browse), `report.html`, `claim.html`, `faq.html`, `about.html`
+`index.html` (home), `items.html` (browse), `report.html`, `claim.html`, `faq.html`, `about.html`, `found_items.html` (owners confirm they got their item back)
 
 ### Files
 

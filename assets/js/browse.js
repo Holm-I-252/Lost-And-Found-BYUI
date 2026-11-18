@@ -138,6 +138,11 @@
         setPressed('[data-type]', 'data-type', state.type);
         setPressed('[data-view]', 'data-view', state.view);
         setPressed('#categoryChips .chip', 'data-cat', state.cat);
+
+        // The phone "Filters" button shows how many filters (besides the search) are on.
+        const active = ['where', 'when', 'cat', 'type'].filter(key => state[key] !== '').length;
+        $('filtersCount').hidden = active === 0;
+        $('filtersCount').textContent = active;
     }
 
     function setReports() {
@@ -155,6 +160,18 @@
         strong.textContent = list.length;
         const label = list.length === reports.length ? ` report${list.length === 1 ? '' : 's'}` : ` of ${reports.length} reports match`;
         box.replaceChildren(strong, label);
+        $('showResults').textContent = list.length ? `Show ${list.length} item${list.length === 1 ? '' : 's'}` : 'No matches yet';
+    }
+
+    // ---------- Filters sheet (phones) ----------
+
+    function setSheet(open) {
+        const panel = $('filters');
+        panel.classList.toggle('is-open', open);
+        $('sheetBackdrop').classList.toggle('is-visible', open);
+        document.documentElement.classList.toggle('sheet-open', open);
+        $('filtersToggle').setAttribute('aria-expanded', String(open));
+        if (open) panel.scrollTop = 0;
     }
 
     function renderGrid(list) {
@@ -243,7 +260,11 @@
             setReports();
             update({});
         });
-        $('filters').addEventListener('submit', event => event.preventDefault());
+        $('filters').addEventListener('submit', event => {
+            event.preventDefault();
+            // "Search" on a phone keyboard just closes the keyboard; results already update as you type.
+            document.activeElement.blur();
+        });
         $('filters').addEventListener('reset', event => {
             event.preventDefault();
             update({ q: '', where: '', when: '', from: '', to: '', cat: '', type: '' });
@@ -273,6 +294,17 @@
             event.preventDefault();
             $('fWhat').focus();
         });
+
+        $('filtersToggle').addEventListener('click', () => setSheet(true));
+        document.querySelectorAll('[data-close-filters]').forEach(button => button.addEventListener('click', () => setSheet(false)));
+        $('sheetBackdrop').addEventListener('click', () => setSheet(false));
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && $('filters').classList.contains('is-open')) setSheet(false);
+        });
+        matchMedia('(max-width: 700px)').addEventListener('change', event => {
+            if (!event.matches) setSheet(false);
+        });
+        FoundIt.swipeToClose(document.querySelector('.sheet-head'), $('filters'), () => setSheet(false));
     }
 
     document.addEventListener('DOMContentLoaded', () => {

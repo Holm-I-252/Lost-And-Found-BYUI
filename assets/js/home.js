@@ -89,7 +89,8 @@
         const element = document.getElementById('homeMap');
         const campusMap = FoundIt.createMap(element, {
             onSelect: report => FoundIt.openItem(report),
-            zoom: 16
+            zoom: 16,
+            lockOnTouch: true
         });
         if (campusMap) campusMap.update(reports, true);
     }

@@ -39,8 +39,26 @@
         return box;
     }
 
+    // On touch screens a map in the middle of a page would catch every swipe,
+    // so it stays still until it's tapped once.
+    function lockUntilTapped(map, element) {
+        if (!matchMedia('(pointer: coarse)').matches) return;
+        map.dragging.disable();
+        map.touchZoom.disable();
+        const cover = document.createElement('button');
+        cover.type = 'button';
+        cover.className = 'map-lock';
+        cover.innerHTML = `<span>${FoundIt.icon ? FoundIt.icon('map') : ''}Tap to explore the map</span>`;
+        cover.addEventListener('click', () => {
+            cover.hidden = true;
+            map.dragging.enable();
+            map.touchZoom.enable();
+        });
+        element.appendChild(cover);
+    }
+
     FoundIt.createMap = function (element, options) {
-        const { onSelect, zoom = 16 } = options || {};
+        const { onSelect, zoom = 16, lockOnTouch = false } = options || {};
         if (!window.L) {
             element.innerHTML = '<p class="map-fallback">The campus map couldn’t load. Check your connection and refresh.</p>';
             return null;
@@ -50,6 +68,7 @@
         // Scroll-zoom only after the map is clicked, so the page still scrolls past it.
         map.on('click focus', () => map.scrollWheelZoom.enable());
         map.on('mouseout', () => map.scrollWheelZoom.disable());
+        if (lockOnTouch) lockUntilTapped(map, element);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
