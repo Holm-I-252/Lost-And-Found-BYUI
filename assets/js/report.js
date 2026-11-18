@@ -1,11 +1,19 @@
 // Report page: pick "lost" or "found", then the matching Google Form opens below.
 // Forms load only when chosen, and the choice is kept in the URL (?type=found).
+// found_items.html reuses this file: its frame has data-autoload, so the form opens right away.
 (function () {
     const FoundIt = window.FoundIt;
     const config = window.FOUNDIT_CONFIG || {};
-    const FORMS = { lost: config.lostForm, found: config.foundForm };
-    // Embedded Google Forms can't grow to fit, so each frame gets roughly its form's height.
-    const HEIGHTS = { lost: 1150, found: 2300 };
+    const FORMS = { lost: config.lostForm, found: config.foundForm, confirm: config.confirmFoundForm };
+    const TITLES = { lost: 'Lost item report form', found: 'Found item report form', confirm: 'Confirm you found your item form' };
+    // Embedded Google Forms can't grow to fit, so each frame gets its form's measured height:
+    // [wide screens, phones]. Forms get taller when the screen is narrow.
+    const HEIGHTS = { lost: [1150, 1340], found: [2300, 2640], confirm: [1060, 1140] };
+    const phone = matchMedia('(max-width: 600px)');
+
+    function frameHeight(type) {
+        return `${HEIGHTS[type][phone.matches ? 1 : 0]}px`;
+    }
 
     function embedUrl(link) {
         const url = new URL(link);
@@ -31,16 +39,27 @@
 
     function loadForm(type) {
         const frame = document.querySelector(`[data-form="${type}"]`);
-        if (frame.dataset.ready) return;
+        if (!frame || frame.dataset.ready) return;
         frame.dataset.ready = 'true';
         if (!FORMS[type]) {
             comingSoon(frame, type);
             return;
         }
+        // A long form is easier to fill in on its own page, especially on a phone.
+        const open = document.createElement('a');
+        open.className = 'form-open-link';
+        open.href = FORMS[type];
+        open.target = '_blank';
+        open.rel = 'noopener';
+        open.innerHTML = FoundIt.icon('arrow');
+        open.append('Open the form full screen');
+        frame.before(open);
+
         const iframe = document.createElement('iframe');
-        iframe.title = type === 'lost' ? 'Lost item report form' : 'Found item report form';
+        iframe.title = TITLES[type];
         iframe.src = embedUrl(FORMS[type]);
-        iframe.style.height = `${HEIGHTS[type]}px`;
+        iframe.dataset.type = type;
+        iframe.style.height = frameHeight(type);
         iframe.addEventListener('load', () => frame.classList.add('is-loaded'));
         frame.appendChild(iframe);
     }
@@ -64,7 +83,15 @@
         document.querySelectorAll('[data-choice]').forEach(button => {
             button.addEventListener('click', () => choose(button.dataset.choice, true));
         });
+        document.querySelectorAll('[data-form][data-autoload]').forEach(frame => loadForm(frame.dataset.form));
         const type = new URLSearchParams(window.location.search).get('type');
-        if (type === 'lost' || type === 'found') choose(type, false);
+        if ((type === 'lost' || type === 'found') && document.getElementById('lostPanel')) choose(type, false);
+
+        // Turning the phone (or resizing the window) changes how tall the forms are.
+        phone.addEventListener('change', () => {
+            document.querySelectorAll('.form-frame iframe[data-type]').forEach(iframe => {
+                iframe.style.height = frameHeight(iframe.dataset.type);
+            });
+        });
     });
 })();

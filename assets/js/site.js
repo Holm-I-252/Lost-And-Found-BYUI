@@ -72,18 +72,34 @@
     function setUpHeader() {
         const header = document.querySelector('.site-header');
         if (!header) return;
+        const menuButton = header.querySelector('[data-menu-toggle]');
+        const nav = document.getElementById('site-nav');
+        const phone = matchMedia('(max-width: 760px)');
 
-        const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 12);
+        // On phones the header slides away while scrolling down and comes back on the way up.
+        const setHidden = hidden => {
+            header.classList.toggle('is-hidden', hidden);
+            document.documentElement.classList.toggle('header-hidden', hidden);
+        };
+        let lastY = window.scrollY;
+        const onScroll = () => {
+            const y = window.scrollY;
+            header.classList.toggle('is-scrolled', y > 12);
+            const menuOpen = nav && nav.classList.contains('is-open');
+            if (phone.matches && !menuOpen && y > 140 && y > lastY + 4) setHidden(true);
+            else if (y < lastY - 4 || y <= 140 || !phone.matches) setHidden(false);
+            lastY = y;
+        };
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
 
-        const menuButton = header.querySelector('[data-menu-toggle]');
-        const nav = document.getElementById('site-nav');
         if (!menuButton || !nav) return;
 
         const setMenu = open => {
             nav.classList.toggle('is-open', open);
             header.classList.toggle('menu-open', open);
+            document.documentElement.classList.toggle('menu-open', open);
+            if (open) setHidden(false);
             menuButton.setAttribute('aria-expanded', String(open));
             menuButton.innerHTML = icon(open ? 'close' : 'menu');
             menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
@@ -96,7 +112,45 @@
         nav.addEventListener('click', event => {
             if (event.target.closest('a')) setMenu(false);
         });
+        // A tap anywhere outside the open menu closes it.
+        document.addEventListener('click', event => {
+            if (nav.classList.contains('is-open') && !nav.contains(event.target) && !menuButton.contains(event.target)) setMenu(false);
+        });
     }
+
+    // Drag a bottom sheet down by its top edge to close it (phones).
+    function swipeToClose(handle, sheet, close) {
+        if (!handle || !sheet) return;
+        let startY = null;
+        let distance = 0;
+        handle.addEventListener(
+            'touchstart',
+            event => {
+                if (sheet.scrollTop > 0) return;
+                startY = event.touches[0].clientY;
+                distance = 0;
+                sheet.style.transition = 'none';
+            },
+            { passive: true }
+        );
+        handle.addEventListener(
+            'touchmove',
+            event => {
+                if (startY === null) return;
+                distance = Math.max(0, event.touches[0].clientY - startY);
+                sheet.style.transform = `translateY(${distance}px)`;
+            },
+            { passive: true }
+        );
+        handle.addEventListener('touchend', () => {
+            if (startY === null) return;
+            startY = null;
+            sheet.style.transition = '';
+            sheet.style.transform = '';
+            if (distance > 90) close();
+        });
+    }
+    FoundIt.swipeToClose = swipeToClose;
 
     // ---------- Motion ----------
 
@@ -276,6 +330,7 @@
         dialog.className = 'item-dialog';
         dialog.setAttribute('aria-labelledby', 'itemDialogTitle');
         dialog.innerHTML = `
+            <span class="item-dialog__grabber" aria-hidden="true"></span>
             <div class="item-dialog__media"><span class="item-dialog__emoji" aria-hidden="true"></span></div>
             <button type="button" class="item-dialog__close" data-close aria-label="Close details">${icon('close')}</button>
             <div class="item-dialog__body">
@@ -295,6 +350,8 @@
             document.documentElement.classList.remove('dialog-open');
             document.dispatchEvent(new CustomEvent('foundit:dialogclose'));
         });
+        // On phones the details open as a bottom sheet; pull the picture down to close it.
+        swipeToClose(dialog.querySelector('.item-dialog__media'), dialog, () => dialog.close());
         return dialog;
     }
 
