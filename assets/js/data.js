@@ -261,6 +261,89 @@
         return (b.reportedAt || b.when || 0) - (a.reportedAt || a.when || 0);
     }
 
+    // ---------- Reports sent from this browser ----------
+
+    // The Report page sends each report to its Google Form and also keeps a copy here,
+    // so it shows on the board right away instead of waiting for the published sheet
+    // (and the found-item sheet isn't published yet). Only the public fields are kept:
+    // never the finder's name or email.
+    const LOCAL_KEY = 'foundit-my-reports';
+
+    function readLocal() {
+        try {
+            const list = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+            return Array.isArray(list) ? list.filter(entry => entry && (entry.type === 'lost' || entry.type === 'found')) : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function writeLocal(list) {
+        try {
+            localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function localToReport(entry) {
+        const reportedAt = new Date(entry.submittedAt);
+        const report = makeReport({
+            type: entry.type,
+            idSeed: entry.submittedAt,
+            item: entry.item,
+            description: entry.description,
+            location: entry.location,
+            happenedAt: parseDate(entry.date),
+            reportedAt: isNaN(reportedAt) ? null : reportedAt,
+            image: entry.image,
+            extras: Array.isArray(entry.extras) ? entry.extras : []
+        });
+        report.mine = true;
+        return report;
+    }
+
+    // Saves a report sent from the Report page and returns it, ready to show.
+    function saveLocalReport(fields) {
+        const entry = {
+            type: fields.type,
+            item: fields.item || '',
+            description: fields.description || '',
+            location: fields.location || '',
+            date: fields.date || '',
+            image: fields.image || '',
+            extras: fields.extras || [],
+            submittedAt: new Date().toISOString()
+        };
+        const report = localToReport(entry);
+        report.savedHere = writeLocal(readLocal().concat(entry));
+        return report;
+    }
+
+    function sameReport(a, b) {
+        const same = (x, y) => (x || '').trim().toLowerCase() === (y || '').trim().toLowerCase();
+        const day = date => (date ? startOfDay(date).getTime() : null);
+        return a.type === b.type && same(a.item, b.item) && same(a.location, b.location) && day(a.happenedAt) === day(b.happenedAt);
+    }
+
+    // Adds this browser's own reports to the ones from the sheets. Once a report
+    // also shows up in a published sheet, the local copy is dropped so it isn't listed twice.
+    function mergeLocal(sheetReports) {
+        const entries = readLocal();
+        if (!entries.length) return sheetReports;
+        const keep = [];
+        const local = [];
+        entries.forEach(entry => {
+            const report = localToReport(entry);
+            if (sheetReports.some(other => sameReport(report, other))) return;
+            keep.push(entry);
+            local.push(report);
+        });
+        if (keep.length !== entries.length) writeLocal(keep);
+        return sheetReports.concat(local);
+    }
+
     // Fetches every published sheet in config.js. A sheet that fails is skipped
     // (and listed in `errors`) so one broken link doesn't empty the whole board.
     async function loadReports() {
@@ -272,7 +355,7 @@
                 return toReports(await response.text(), type);
             })
         );
-        const reports = results.filter(result => result.status === 'fulfilled').flatMap(result => result.value);
+        const reports = mergeLocal(results.filter(result => result.status === 'fulfilled').flatMap(result => result.value));
         const errors = results.filter(result => result.status === 'rejected').map(result => result.reason);
         return { reports: reports.sort(newestFirst), errors, hasFoundSheet: Boolean(config.foundItemsCsv) };
     }
@@ -309,6 +392,7 @@
     FoundIt.categories = CATEGORIES.concat(OTHER);
     FoundIt.buildings = BUILDINGS;
     FoundIt.loadReports = loadReports;
+    FoundIt.saveLocalReport = saveLocalReport;
     FoundIt.sampleReports = sampleReports;
     FoundIt.newestFirst = newestFirst;
 })();

@@ -266,6 +266,7 @@
         const list = [badge(report.type === 'lost' ? 'Lost' : 'Found', `badge--${report.type}`)];
         if (report.resolved) list.push(badge(report.status, 'badge--resolved'));
         if (report.sample) list.push(badge('Sample', 'badge--sample'));
+        if (report.mine) list.push(badge('Your report', 'badge--mine'));
         return list;
     }
 
@@ -442,6 +443,8 @@
 
         d.querySelector('.item-dialog__note').textContent = report.sample
             ? 'This is a sample item that shows how the board works.'
+            : report.mine
+            ? 'You posted this from this device. It was also sent to the FoundIt team.'
             : lost
             ? 'Seen it somewhere? Report it as found and tell us where it is now.'
             : 'Think it’s yours? Be ready to describe a detail that isn’t listed here.';
