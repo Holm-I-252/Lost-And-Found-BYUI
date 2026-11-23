@@ -2047,6 +2047,198 @@ select.input {
   color: var(--muted);
 }
 
+/* Report forms built by report.js (lost and found) */
+.form-frame.form-frame--site {
+  min-height: 0;
+  padding: 26px;
+}
+
+.report-form {
+  display: grid;
+  gap: 18px;
+}
+
+.rf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+}
+
+.rf-field {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rf-field--wide {
+  grid-column: 1 / -1;
+}
+
+.rf-req,
+.rf-optional {
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.rf-textarea {
+  height: auto;
+  min-height: 112px;
+  padding: 12px 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.rf-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.report-form.was-checked .input:invalid {
+  border-color: #D9534F;
+}
+
+.rf-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rf-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.rf-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rf-option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.rf-option:hover span {
+  border-color: color-mix(in srgb, var(--navy) 35%, var(--line));
+}
+
+.rf-option input:checked + span {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+[data-theme="dark"] .rf-option input:checked + span {
+  background: var(--sky);
+  border-color: var(--sky);
+  color: var(--navy-deep);
+}
+
+.rf-option input:focus-visible + span {
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+.rf-private {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.rf-private__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.rf-private__title .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.rf-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, #D9534F 12%, transparent);
+  color: #B02A25;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .rf-error {
+  color: #FF9A95;
+}
+
+.rf-error[hidden] {
+  display: none;
+}
+
+.rf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.report-done h3:focus {
+  outline: none;
+}
+
+.report-done .btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.badge--mine {
+  background: var(--sky-soft);
+  color: var(--navy);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--navy) 25%, transparent);
+}
+
+[data-theme="dark"] .badge--mine {
+  color: var(--sky);
+}
+
+@media (max-width: 600px) {
+  .form-frame.form-frame--site {
+    padding: 18px 16px;
+  }
+
+  .rf-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rf-actions .btn {
+    width: 100%;
+  }
+}
+
 .tips {
   position: sticky;
   top: calc(var(--header-h) + 18px);

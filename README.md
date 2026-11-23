@@ -10,7 +10,7 @@ Live site: https://holm-i-252.github.io/Lost-And-Found-BYUI/
 - **Live board:** reads the lost-item Google Sheet and shows every real report as a card. While the board is nearly empty, clearly marked **Sample** items show how it looks when busy.
 - **Browse:** filters for What / Where / When, categories, Lost or Found, sorting. Filters live in the URL, so a filtered view can be shared. Each item opens a details window with its photo, "Show on map" and "Copy link".
 - **Campus map:** each report lands on its BYU-Idaho building (building names and coordinates from OpenStreetMap).
-- **Report:** choose "I lost something" or "I found something" and the matching Google Form opens right on the page.
+- **Report:** choose "I lost something" or "I found something" and fill in the form right on the page. Each report is sent to the team's Google Form (so it lands in the response sheet) and also saved in the browser, so it shows on Browse and the home page right away with a **Your report** badge. Once the same report shows up in a published sheet, the browser copy is dropped so it isn't listed twice.
 - **New pages:** How to claim (step timeline), FAQ (with search), About (team and how we built it).
 - **Made for phones:** compact item rows, filters in a pull-up sheet with a "Show N items" button, item details as a bottom sheet (swipe down to close), a header that hides while you scroll, one-row category chips, forms sized for small screens, and no zoom-in on iPhone inputs.
 - Works by keyboard and respects "reduce motion".
@@ -33,7 +33,8 @@ Live site: https://holm-i-252.github.io/Lost-And-Found-BYUI/
 
 ### Settings to know
 
-- Found-item form is linked (`foundForm` in `config.js`). To show found items on Browse, publish its sheet's **Public** tab as CSV and put that link in `foundItemsCsv`.
+- Found-item form is linked (`foundForm` in `config.js`). Found reports show on Browse in the browser that sent them; to show them to **everyone**, publish its sheet's **Public** tab as CSV and put that link in `foundItemsCsv`.
+- The Report page's forms send answers to Google using each question's entry number (`lostFormEntries` and `foundFormEntries` in `config.js`). If a question is rebuilt in Google Forms, update its number there.
 - Publish only sheet tabs **without names, emails or phone numbers**: every published column can show up on the site.
 - `showSamplesWhenFewerThan` in `config.js` controls the sample items (0 = never show them).
 

@@ -1,6 +1,9 @@
-// Report page: pick "lost" or "found", then the matching Google Form opens below.
-// Forms load only when chosen, and the choice is kept in the URL (?type=found).
-// found_items.html reuses this file: its frame has data-autoload, so the form opens right away.
+// Report page: pick "lost" or "found", then the matching form opens below.
+// The lost and found forms are built here in the site's own style. Each report is sent
+// to the team's Google Form (so it lands in the response sheet) and saved in this browser,
+// so it shows up on the Browse page right away.
+// The choice is kept in the URL (?type=found).
+// found_items.html reuses this file: its frame has data-autoload, so its Google Form opens right away.
 (function () {
     const FoundIt = window.FoundIt;
     const config = window.FOUNDIT_CONFIG || {};
@@ -37,12 +40,210 @@
         frame.appendChild(box);
     }
 
+    // ---------- Site forms (lost and found) ----------
+
+    const ENTRIES = { lost: config.lostFormEntries, found: config.foundFormEntries };
+    const TURNED_IN = 'I turned it in (tell us where below)';
+    const WHERE_NOW = [
+        ['I still have it', 'I still have it'],
+        [TURNED_IN, 'I turned it in'],
+        ['I left it where I found it', 'I left it where I found it']
+    ];
+
+    function todayValue() {
+        const now = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    }
+
+    function formHtml(type) {
+        const lost = type === 'lost';
+        const id = name => `${type}-${name}`;
+        const whereNow = lost ? '' : `
+            <fieldset class="rf-field rf-field--wide">
+                <legend class="field-label">Where is the item now? <span class="rf-req">Required</span></legend>
+                <div class="rf-options">
+                    ${WHERE_NOW.map(([value, label], i) => `
+                    <label class="rf-option"><input type="radio" name="whereNow" value="${value}" required${i === 0 ? ' checked' : ''}><span>${label}</span></label>`).join('')}
+                </div>
+            </fieldset>
+            <div class="rf-field rf-field--wide" data-turned-in hidden>
+                <label class="field-label" for="${id('turnedInAt')}">Where did you turn it in? <span class="rf-req">Required</span></label>
+                <input class="input" id="${id('turnedInAt')}" name="turnedInAt" maxlength="120" placeholder="e.g., the front desk of the STC" disabled>
+            </div>`;
+        const contact = lost ? '' : `
+            <div class="rf-private rf-field--wide">
+                <p class="rf-private__title">${FoundIt.icon('shield')}Your contact info</p>
+                <p class="rf-hint">Only the FoundIt team sees this, so we can connect you with the owner. It is never shown on the website.</p>
+                <div class="rf-grid">
+                    <div class="rf-field">
+                        <label class="field-label" for="${id('name')}">Your name <span class="rf-req">Required</span></label>
+                        <input class="input" id="${id('name')}" name="name" autocomplete="name" maxlength="80" required>
+                    </div>
+                    <div class="rf-field">
+                        <label class="field-label" for="${id('email')}">Your email <span class="rf-req">Required</span></label>
+                        <input class="input" id="${id('email')}" name="email" type="email" autocomplete="email" maxlength="120" required>
+                    </div>
+                </div>
+            </div>`;
+        return `
+            <form class="report-form" novalidate>
+                <div class="rf-grid">
+                    <div class="rf-field">
+                        <label class="field-label" for="${id('item')}">Item <span class="rf-req">Required</span></label>
+                        <input class="input" id="${id('item')}" name="item" maxlength="80" required placeholder="e.g., Blue backpack, car keys">
+                    </div>
+                    <div class="rf-field">
+                        <label class="field-label" for="${id('date')}">${lost ? 'Date lost' : 'Date found'} <span class="rf-req">Required</span></label>
+                        <input class="input" id="${id('date')}" name="date" type="date" required max="${todayValue()}" value="${todayValue()}">
+                    </div>
+                    <div class="rf-field rf-field--wide">
+                        <label class="field-label" for="${id('description')}">Description <span class="rf-req">Required</span></label>
+                        <textarea class="input rf-textarea" id="${id('description')}" name="description" rows="4" maxlength="600" required placeholder="Color, brand, size, stickers or other marks."></textarea>
+                        <p class="rf-hint">Don’t include card or ID numbers.${lost ? '' : ' Keep one detail to yourself so the real owner can prove it’s theirs.'}</p>
+                    </div>
+                    <div class="rf-field rf-field--wide">
+                        <label class="field-label" for="${id('location')}">${lost ? 'Where did you last have it?' : 'Where did you find it?'} <span class="rf-req">Required</span></label>
+                        <input class="input" id="${id('location')}" name="location" maxlength="120" required placeholder="Building and area, e.g., McKay Library, 2nd floor">
+                    </div>
+                    <div class="rf-field rf-field--wide">
+                        <label class="field-label" for="${id('image')}">Photo link <span class="rf-optional">Optional</span></label>
+                        <input class="input" id="${id('image')}" name="image" type="url" inputmode="url" maxlength="500" placeholder="https://drive.google.com/…">
+                        <p class="rf-hint">Share it from Google Drive or Photos so anyone with the link can see it.</p>
+                    </div>
+                    ${whereNow}
+                    ${contact}
+                </div>
+                <p class="rf-error" role="alert" hidden></p>
+                <div class="rf-actions">
+                    <button class="btn btn--primary" type="submit">${FoundIt.icon('check')}${lost ? 'Post my lost item' : 'Post the found item'}</button>
+                    <p class="rf-hint">Everything above the contact info is public on the board.</p>
+                </div>
+            </form>`;
+    }
+
+    // Sends the answers to the Google Form, the same as filling it in on Google.
+    // Google doesn't let other sites read its reply, so a sent request counts as done.
+    function sendToGoogle(type, values) {
+        const entries = ENTRIES[type];
+        if (!FORMS[type] || !entries) return Promise.resolve(false);
+        const body = new URLSearchParams();
+        const add = (key, value) => {
+            if (entries[key] && value) body.append(`entry.${entries[key]}`, value);
+        };
+        ['item', 'description', 'location', 'image', 'whereNow', 'turnedInAt', 'name', 'email'].forEach(key => add(key, values[key]));
+        const [year, month, day] = values.date.split('-');
+        if (entries.date) {
+            body.append(`entry.${entries.date}_year`, year);
+            body.append(`entry.${entries.date}_month`, String(Number(month)));
+            body.append(`entry.${entries.date}_day`, String(Number(day)));
+        }
+        const url = FORMS[type].replace(/\/viewform.*$/, '/formResponse');
+        return fetch(url, { method: 'POST', mode: 'no-cors', body }).then(() => true, () => false);
+    }
+
+    function showError(form, message) {
+        const box = form.querySelector('.rf-error');
+        box.textContent = message;
+        box.hidden = !message;
+    }
+
+    function showDone(frame, report, sent) {
+        const lost = report.type === 'lost';
+        const box = document.createElement('div');
+        box.className = 'coming-soon report-done';
+        box.innerHTML = `
+            <div class="coming-soon__art" aria-hidden="true">${lost ? '📣' : '🎉'}</div>
+            <h3 tabindex="-1"></h3>
+            <p></p>
+            <div class="btn-row">
+                <a class="btn btn--primary" data-see>${FoundIt.icon('arrow')}See it on the board</a>
+                <button class="btn btn--ghost" type="button" data-again>${FoundIt.icon('refresh')}Report another item</button>
+            </div>`;
+        box.querySelector('h3').textContent = lost ? 'Your lost item is on the board' : 'Thanks! The found item is on the board';
+        box.querySelector('p').textContent = (lost
+            ? 'Finders can now match it on the Browse page. Check back for found items that look like yours.'
+            : 'The owner can now find it on the Browse page. The FoundIt team will email you if someone claims it.')
+            + (sent ? '' : ' We couldn’t reach Google Forms just now, so the team may not have it yet. It is still saved on this device.');
+        box.querySelector('[data-see]').href = `items.html#item=${report.id}`;
+        box.querySelector('[data-again]').addEventListener('click', () => {
+            delete frame.dataset.ready;
+            frame.replaceChildren();
+            loadForm(report.type);
+            frame.querySelector('input').focus();
+        });
+        frame.replaceChildren(box);
+        box.querySelector('h3').focus();
+    }
+
+    function buildSiteForm(frame, type) {
+        frame.classList.add('is-loaded', 'form-frame--site');
+        frame.innerHTML = formHtml(type);
+        const form = frame.querySelector('form');
+
+        if (type === 'found') {
+            const turnedIn = form.querySelector('[data-turned-in]');
+            const turnedInInput = turnedIn.querySelector('input');
+            form.addEventListener('change', event => {
+                if (event.target.name !== 'whereNow') return;
+                const on = event.target.value === TURNED_IN;
+                turnedIn.hidden = !on;
+                turnedInInput.disabled = !on;
+                turnedInInput.required = on;
+            });
+        }
+
+        form.addEventListener('input', () => {
+            if (form.checkValidity()) showError(form, '');
+        });
+
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            showError(form, '');
+            form.querySelectorAll('input, textarea').forEach(field => {
+                if (field.type !== 'radio' && field.type !== 'date') field.value = field.value.trim();
+            });
+            if (!form.checkValidity()) {
+                showError(form, 'Please fill in the highlighted fields.');
+                form.classList.add('was-checked');
+                form.reportValidity();
+                return;
+            }
+            const values = Object.fromEntries(new FormData(form));
+            const button = form.querySelector('[type="submit"]');
+            button.disabled = true;
+            button.lastChild.textContent = 'Posting…';
+
+            const sent = await sendToGoogle(type, values);
+            const extras = [];
+            if (type === 'found') {
+                extras.push({ label: 'Where is the item now?', value: (WHERE_NOW.find(([value]) => value === values.whereNow) || [, values.whereNow])[1] });
+                if (values.whereNow === TURNED_IN && values.turnedInAt) extras.push({ label: 'Where did you turn it in?', value: values.turnedInAt });
+            }
+            // Only public fields are saved in the browser: never the name or email.
+            const report = FoundIt.saveLocalReport({
+                type,
+                item: values.item,
+                description: values.description,
+                location: values.location,
+                date: values.date,
+                image: values.image,
+                extras
+            });
+            showDone(frame, report, sent);
+        });
+    }
+
     function loadForm(type) {
         const frame = document.querySelector(`[data-form="${type}"]`);
         if (!frame || frame.dataset.ready) return;
         frame.dataset.ready = 'true';
         if (!FORMS[type]) {
             comingSoon(frame, type);
+            return;
+        }
+        if (ENTRIES[type]) {
+            buildSiteForm(frame, type);
             return;
         }
         // A long form is easier to fill in on its own page, especially on a phone.
